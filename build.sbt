@@ -243,8 +243,8 @@ lazy val doobieSettings = buildSettings ++ commonSettings
 lazy val doobie = project.in(file("."))
   .settings(doobieSettings)
   .settings(noPublishSettings)
-  .dependsOn(free, core, h2, hikari, postgres, specs2, example, bench, scalatest, docs, refined)
-  .aggregate(free, core, h2, hikari, postgres, specs2, example, bench, scalatest, docs, refined)
+  .dependsOn(free, core, h2, hikari, postgres, specs2, example, bench, scalatest, docs, refined, tagless)
+  .aggregate(free, core, h2, hikari, postgres, specs2, example, bench, scalatest, docs, refined, tagless)
   .settings(
     releaseCrossBuild := true,
     releaseProcess := Seq[ReleaseStep](
@@ -538,5 +538,20 @@ lazy val refined = project
       "eu.timepit"            %% "refined"        % refinedVersion,
       scalaOrganization.value %  "scala-compiler" % scalaVersion.value % Provided,
       "com.h2database"        %  "h2"             % h2Version          % "test"
+    )
+  )
+
+lazy val tagless = project
+  .in(file("modules/tagless"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .dependsOn(core)
+  .dependsOn(postgres)
+  .settings(doobieSettings)
+  .settings(noPublishSettings)
+  .settings(
+    name := "doobie-tagless",
+    description := "Experimental tagless encoding",
+    scalacOptions --= Seq(
+      "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
     )
   )
